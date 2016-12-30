@@ -29,7 +29,7 @@ ipv4_header_decode (const char *packet, size_t length, ipv4_header_t *header)
   /* Check minimum header length. */
   if (UNLIKELY (length < sizeof (*header)))
     {
-      log_debug_maybe (("Short packet of length %u.", length));
+      log_debug_maybe (("Short packet of length %zu.", length));
       return 0;
     }
 
@@ -46,14 +46,14 @@ ipv4_header_decode (const char *packet, size_t length, ipv4_header_t *header)
   if (UNLIKELY (IPV4_HEADER_LENGTH(*header) < sizeof (*header)))
     {
       log_debug_maybe (("IP header too small, indicated length is %u, "
-                        "minimum is %u.",
+                        "minimum is %zu.",
                         IPV4_HEADER_LENGTH(*header), sizeof (*header)));
       return 0;
     }
 
   if (UNLIKELY (IPV4_HEADER_LENGTH(*header) > length))
     {
-      log_debug_maybe (("Truncated IP header, indicated length is %u, available is %u.",
+      log_debug_maybe (("Truncated IP header, indicated length is %u, available is %zu.",
                         IPV4_HEADER_LENGTH(*header), length));
       return 0;
     }
@@ -61,7 +61,7 @@ ipv4_header_decode (const char *packet, size_t length, ipv4_header_t *header)
   /* The checksum vanishes if it is correct. */
   if (UNLIKELY (ipv4_checksum (packet, IPV4_HEADER_LENGTH(*header), 0) != 0))
     {
-      log_debug_maybe (("Incorrect IP checksum (header length %u, packet length %u).",
+      log_debug_maybe (("Incorrect IP checksum (header length %u, packet length %zu).",
                         IPV4_HEADER_LENGTH(*header), length));
       return 0;
     }
@@ -78,7 +78,7 @@ ipv4_header_decode (const char *packet, size_t length, ipv4_header_t *header)
   if (UNLIKELY (header->total_length > length))
     {
       log_debug_maybe (("Truncated IP packet, indicated length is %u, "
-                        "available is %u.",
+                        "available is %zu.",
                         header->total_length, length));
       return 0;
     }
@@ -166,7 +166,7 @@ udp_header_decode (const char *packet, size_t length, const ipv4_header_t *ip_he
   if (UNLIKELY (header->total_length < sizeof (*header)))
     {
       log_debug_maybe (("UDP total length smaller than header, "
-                        "indicated total length is %u, header is %u "
+                        "indicated total length is %u, header is %zu "
                         "bytes long.",
                         header->total_length, sizeof (*header)));
       return 0;
@@ -175,7 +175,7 @@ udp_header_decode (const char *packet, size_t length, const ipv4_header_t *ip_he
   if (UNLIKELY (header->total_length > length))
     {
       log_debug_maybe (("Truncated UDP packet (" IPV4_FORMAT " -> " IPV4_FORMAT
-                        ", UDP length %u, available %u).",
+                        ", UDP length %u, available %zu).",
                         IPV4_FORMAT_ARGS (ip_header->source),
                         IPV4_FORMAT_ARGS (ip_header->destination),
                         header->total_length, length));

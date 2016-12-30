@@ -107,7 +107,7 @@ forward_decode_encode (const char* buffer, size_t length, forward_t *forward, si
   if (UNLIKELY (length > sizeof (forward->payload)))
     {
       log_debug_maybe (("Dropping overlong packet (" IPV4_FORMAT " -> " IPV4_FORMAT
-                        ", %u bytes).",
+                        ", %zu bytes).",
                         IPV4_FORMAT_ARGS (ip_header.source),
                         IPV4_FORMAT_ARGS (ip_header.destination),
                         length));
@@ -348,7 +348,7 @@ forward_process (const char *buffer, size_t length)
                   goto retry;
                 }
 
-              log_debug_maybe(("Forwarded %u bytes.", fwd_length));
+              log_debug_maybe(("Forwarded %zu bytes.", fwd_length));
               return 1;
             }
 

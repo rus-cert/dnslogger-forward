@@ -29,7 +29,7 @@ dns_header_decode (const char *packet, size_t length, dns_header_t *header)
 {
   if (UNLIKELY (length < sizeof (*header)))
     {
-      log_debug_maybe (("Truncated DNS packet (length %u).", length));
+      log_debug_maybe (("Truncated DNS packet (length %zu).", length));
       return 0;
     }
 
