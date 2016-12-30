@@ -5,6 +5,7 @@ prefix = @prefix@
 exec_prefix = @exec_prefix@
 bindir = @bindir@
 libdir = @libdir@
+datarootdir = @datarootdir@
 mandir = @mandir@
 man8dir = $(mandir)/man8
 exeext = @EXEEXT@
@@ -62,28 +63,29 @@ dist:
 	rm -rf $(named_version)
 
 clean :
-	-rm dnslogger-forward
-	-rm src/*.o
-	-rm testsuite/*.out testsuite/FAILED
-	-rm stamp-dir
+	rm -f dnslogger-forward
+	rm -f src/*.o
+	rm -f testsuite/*.out testsuite/FAILED
+	rm -f stamp-dir
+	-rmdir src testsuite 2> /dev/null || true
 
 distclean : clean
-	-rm config.log config.status config.h stamp-h Makefile
+	rm -f config.log config.status config.h stamp-h Makefile
 
 dnslogger-forward$(exeext) : stamp-dir $(src_obj_files) $(lib_obj_files)
 	$(CC) -o $@ $(src_obj_files) $(lib_obj_files) $(LIBS)
 
 stamp-dir :
-	-mkdir src
-	-mkdir testsuite
+	mkdir -p src
+	mkdir -p testsuite
 	echo timestamp > stamp-dir
 
-src/%.o : $(srcdir)/src/%.c $(DEP_H_FILES)
+src/%.o : $(srcdir)/src/%.c $(DEP_H_FILES) stamp-dir
 	$(CC) $(CFLAGS) $(DEFS) $(INCLUDES) -c -o $@ $<
 
 .PHONY : test test-diff
 
-test :
+test : dnslogger-forward$(exeext) stamp-dir
 	@rm testsuite/FAILED testsuite/*.out 2> /dev/null || true
 	@for x in $(patsubst $(srcdir)/testsuite/%.in,%,$(wildcard $(srcdir)/testsuite/default_*.in)) ; do \
 		$(VALGRIND) ./dnslogger-forward$(exeext) -v -T \
