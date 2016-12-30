@@ -28,6 +28,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 static unsigned server_port;
 static void start_server (void);
@@ -114,7 +115,12 @@ process_stdin (void)
   if (length == sizeof (buffer))
     log_fatal ("Buffer full when reading from standard input.");
 
-  forward_process (buffer, length);
+  char* heap_buffer = malloc(length);
+  memcpy(heap_buffer, buffer, length);
+
+  forward_process (heap_buffer, length);
+
+  free(heap_buffer);
 }
 
 static void
