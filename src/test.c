@@ -40,7 +40,6 @@ static int server_fd;
 void
 test_run (void)
 {
-  log_debug_enable = 1;
   start_server ();
   forward_target ("127.0.0.1", server_port);
   forward_open ();

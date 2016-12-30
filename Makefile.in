@@ -86,7 +86,7 @@ src/%.o : $(srcdir)/src/%.c $(DEP_H_FILES)
 test :
 	@rm testsuite/FAILED testsuite/*.out 2> /dev/null || true
 	@for x in $(patsubst $(srcdir)/testsuite/%.in,%,$(wildcard $(srcdir)/testsuite/default_*.in)) ; do \
-		$(VALGRIND) ./dnslogger-forward$(exeext) -T \
+		$(VALGRIND) ./dnslogger-forward$(exeext) -v -T \
 			< $(srcdir)/testsuite/$$x.in \
 			> testsuite/$$x.out \
 			2>&1 ; \
@@ -97,7 +97,7 @@ test :
 		fi \
 	done || true
 	@for x in $(patsubst $(srcdir)/testsuite/%.in,%,$(wildcard $(srcdir)/testsuite/A_*.in)) ; do \
-		$(VALGRIND) ./dnslogger-forward$(exeext) -A -T \
+		$(VALGRIND) ./dnslogger-forward$(exeext) -A -v -T \
 			< $(srcdir)/testsuite/$$x.in \
 			> testsuite/$$x.out \
 			2>&1 ; \
@@ -108,7 +108,7 @@ test :
 		fi \
 	done || true
 	@for x in $(patsubst $(srcdir)/testsuite/%.in,%,$(wildcard $(srcdir)/testsuite/D_*.in)) ; do \
-		$(VALGRIND) ./dnslogger-forward$(exeext) -D -T \
+		$(VALGRIND) ./dnslogger-forward$(exeext) -D -v -T \
 			< $(srcdir)/testsuite/$$x.in \
 			> testsuite/$$x.out \
 			2>&1 ; \
@@ -119,7 +119,7 @@ test :
 		fi \
 	done || true
 	@for x in tcp_virgin ; do \
-		$(VALGRIND) ./dnslogger-forward$(exeext) -t -T \
+		$(VALGRIND) ./dnslogger-forward$(exeext) -t -v -T \
 			< $(srcdir)/testsuite/$$x.in \
 			> testsuite/$$x.out \
 			2>&1 ; \
