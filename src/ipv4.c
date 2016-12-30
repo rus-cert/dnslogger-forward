@@ -43,6 +43,14 @@ ipv4_header_decode (const char *packet, size_t length, ipv4_header_t *header)
       return 0;
     }
 
+  if (UNLIKELY (IPV4_HEADER_LENGTH(*header) < sizeof (*header)))
+    {
+      log_debug_maybe (("IP header too small, indicated length is %u, "
+                        "minimum is %u.",
+                        IPV4_HEADER_LENGTH(*header), sizeof (*header)));
+      return 0;
+    }
+
   if (UNLIKELY (IPV4_HEADER_LENGTH(*header) > length))
     {
       log_debug_maybe (("Truncated IP header, indicated length is %u, available is %u.",
@@ -69,8 +77,16 @@ ipv4_header_decode (const char *packet, size_t length, ipv4_header_t *header)
 
   if (UNLIKELY (header->total_length > length))
     {
-      log_debug_maybe (("Truncated IP packet, indicated length is %u, available is %u.",
+      log_debug_maybe (("Truncated IP packet, indicated length is %u, "
+                        "available is %u.",
                         header->total_length, length));
+      return 0;
+    }
+
+  if (UNLIKELY (header->total_length < IPV4_HEADER_LENGTH(*header)))
+    {
+      log_debug_maybe (("IP packet total length smaller than header, indicated total length is %u, header is %u bytes long.",
+                        header->total_length, IPV4_HEADER_LENGTH(*header)));
       return 0;
     }
 
@@ -147,6 +163,15 @@ udp_header_decode (const char *packet, size_t length, const ipv4_header_t *ip_he
   header->total_length = ntohs (header->total_length);
 
   /* Check embedded length. */
+  if (UNLIKELY (header->total_length < sizeof (*header)))
+    {
+      log_debug_maybe (("UDP total length smaller than header, "
+                        "indicated total length is %u, header is %u "
+                        "bytes long.",
+                        header->total_length, sizeof (*header)));
+      return 0;
+    }
+
   if (UNLIKELY (header->total_length > length))
     {
       log_debug_maybe (("Truncated UDP packet (" IPV4_FORMAT " -> " IPV4_FORMAT
