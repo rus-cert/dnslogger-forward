@@ -110,7 +110,7 @@ forward_decode_encode (const char* buffer, size_t length, forward_t *forward, si
                         ", %u bytes).",
                         IPV4_FORMAT_ARGS (ip_header.source),
                         IPV4_FORMAT_ARGS (ip_header.destination),
-                        length));
+                        (unsigned) length));
       return 0;
     }
 
@@ -348,7 +348,8 @@ forward_process (const char *buffer, size_t length)
                   goto retry;
                 }
 
-              log_debug_maybe(("Forwarded %u bytes.", fwd_length));
+              log_debug_maybe(("Forwarded %u bytes.",
+                               (unsigned) fwd_length));
               return 1;
             }
 

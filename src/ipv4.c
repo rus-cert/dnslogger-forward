@@ -29,7 +29,7 @@ ipv4_header_decode (const char *packet, size_t length, ipv4_header_t *header)
   /* Check minimum header length. */
   if (UNLIKELY (length < sizeof (*header)))
     {
-      log_debug_maybe (("Short packet of length %u.", length));
+      log_debug_maybe (("Short packet of length %u.", (unsigned) length));
       return 0;
     }
 
@@ -47,14 +47,15 @@ ipv4_header_decode (const char *packet, size_t length, ipv4_header_t *header)
     {
       log_debug_maybe (("IP header too small, indicated length is %u, "
                         "minimum is %u.",
-                        IPV4_HEADER_LENGTH(*header), sizeof (*header)));
+                        IPV4_HEADER_LENGTH(*header),
+                        (unsigned) sizeof (*header)));
       return 0;
     }
 
   if (UNLIKELY (IPV4_HEADER_LENGTH(*header) > length))
     {
       log_debug_maybe (("Truncated IP header, indicated length is %u, available is %u.",
-                        IPV4_HEADER_LENGTH(*header), length));
+                        IPV4_HEADER_LENGTH(*header), (unsigned) length));
       return 0;
     }
 
@@ -62,7 +63,7 @@ ipv4_header_decode (const char *packet, size_t length, ipv4_header_t *header)
   if (UNLIKELY (ipv4_checksum (packet, IPV4_HEADER_LENGTH(*header), 0) != 0))
     {
       log_debug_maybe (("Incorrect IP checksum (header length %u, packet length %u).",
-                        IPV4_HEADER_LENGTH(*header), length));
+                        IPV4_HEADER_LENGTH(*header), (unsigned) length));
       return 0;
     }
 
@@ -79,7 +80,7 @@ ipv4_header_decode (const char *packet, size_t length, ipv4_header_t *header)
     {
       log_debug_maybe (("Truncated IP packet, indicated length is %u, "
                         "available is %u.",
-                        header->total_length, length));
+                        header->total_length, (unsigned) length));
       return 0;
     }
 
@@ -168,7 +169,7 @@ udp_header_decode (const char *packet, size_t length, const ipv4_header_t *ip_he
       log_debug_maybe (("UDP total length smaller than header, "
                         "indicated total length is %u, header is %u "
                         "bytes long.",
-                        header->total_length, sizeof (*header)));
+                        header->total_length, (unsigned) sizeof (*header)));
       return 0;
     }
 
@@ -178,7 +179,7 @@ udp_header_decode (const char *packet, size_t length, const ipv4_header_t *ip_he
                         ", UDP length %u, available %u).",
                         IPV4_FORMAT_ARGS (ip_header->source),
                         IPV4_FORMAT_ARGS (ip_header->destination),
-                        header->total_length, length));
+                        header->total_length, (unsigned) length));
       return 0;
     }
 
